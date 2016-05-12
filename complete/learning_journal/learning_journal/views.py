@@ -3,6 +3,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.httpexceptions import HTTPFound
 from .forms import EntryCreateForm
+from .forms import EntryEditForm
 
 from sqlalchemy.exc import DBAPIError
 
@@ -47,8 +48,26 @@ def create(request):
 
 @view_config(route_name='action', match_param='action=edit', renderer='string')
 def update(request):
-    return 'edit page'
+#    view(request)
+    this_id = request.matchdict.get('id', -1)
+    entry = Entry.by_id(this_id)
+    form = EntryEditForm(request.POST)
+    if form.validate() == False:
+        raise ValidationError('Your entry is invalid')
+    else:
+        if request.method == 'POST':
+           form.populate_obj(entry)
+           DBSession.add(entry)
+           return HTTPFound(location=request.route_url('home'))
+    return {'form': form, 'action': request.matchdict.get('action')}
 
+
+"""
+@view_config(route_name='action', match_param='action=edit', renderer='string')
+def update(request):
+    
+    return 'edit page'
+"""
 
 conn_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

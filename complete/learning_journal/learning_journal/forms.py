@@ -19,3 +19,13 @@ class EntryCreateForm(Form):
         [validators.Length(min=1)],
         filters=[strip_filter]
     )
+
+class EntryEditForm(EntryCreateForm):
+"""
+    updated_body = TextAreaField(
+        'Entry body',
+        [validators.Length(min=1)],
+        filters=[strip_filter]
+    )
+"""
+    pass
